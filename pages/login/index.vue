@@ -126,11 +126,13 @@
 </template>
 
 <script>
+import { getUserByEmail } from '~/api/user.api'
+
 export default {
   layout: 'auth',
 
   middleware: 'auth-forbidden',
-  
+
   data() {
     return {
       email: '',
@@ -140,21 +142,23 @@ export default {
   },
 
   methods: {
-    onSubmitLogin() {
-      this.$store
-        .dispatch('account/authenticateUser', {
+    async onSubmitLogin() {
+      try {
+        await this.$store.dispatch('account/authenticateUser', {
           email: this.email,
           password: this.password,
           isLogin: this.isLogin,
         })
-        .then(() => {
-          this.$router.push('/')
-        })
-        // eslint-disable-next-line no-console
-        .catch((e) => {
-          this.$refs.errorMsg.classList.remove('hidden')
-          this.$refs.errorMsg.textContent = e.data.error.message
-        })
+        const email = this.$store.getters['account/getAccount']
+        const user = await getUserByEmail(email)
+        localStorage.setItem('user', JSON.stringify(user))
+        this.$store.dispatch('user/setUser', user)
+
+        this.$router.push('/')
+      } catch (e) {
+        this.$refs.errorMsg.classList.remove('hidden')
+        this.$refs.errorMsg.textContent = e.data.error.message
+      }
     },
   },
 }

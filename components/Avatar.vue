@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable vue/no-parsing-error -->
 <template>
-  <div class="w-[44px] h-[44px] rounded-full select-none">
+  <div :class="`rounded-full select-none ${getClassSize}`">
     <div v-if="isHaveAvatar" class="w-full h-full">
       <img
         :src="srcImage"
@@ -9,9 +9,17 @@
         class="w-full h-full object-cover rounded-full"
       />
     </div>
-    <div v-else class="w-full h-full bg-dark_primary flex items-center justify-center rounded-full">
-      <p class="uppercase font-bold text-[1.2rem] text-white">{{ firstChar }}</p>
+    <div
+      v-else
+      class="w-full h-full bg-dark_primary flex items-center justify-center rounded-full"
+    >
+      <p :class="`uppercase font-bold  text-white ${getClassSizeText}`">
+        {{ firstChar }}
+      </p>
     </div>
+    <span class="hidden w-[44px] h-[44px] text-[0.8rem]"> </span>
+    <span class="hidden w-[26px] h-[26px] text-[1.2rem]"></span>
+    <span class="hidden w-[100px] h-[100px] text-[2rem]"></span>
   </div>
 </template>
 
@@ -31,7 +39,30 @@ export default {
         return ''
       },
     },
+    size: {
+      type: String,
+      default: () => 'medium',
+    },
   },
+  computed: {
+    getClassSize() {
+      const sizeWith = {
+        small: 26,
+        medium: 44,
+        large: 100,
+      }
 
+      return `w-[${sizeWith[this.size]}px] h-[${sizeWith[this.size]}px]`
+    },
+    getClassSizeText(){
+      const sizeText = {
+        small: 0.8,
+        medium: 1.2,
+        large: 2,
+      }
+
+      return `text-[${sizeText[this.size]}rem] `
+    }
+   },
 }
 </script>

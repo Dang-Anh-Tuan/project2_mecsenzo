@@ -1,6 +1,4 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable vue/this-in-template -->
-<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
   <header class="w-full h-[68px] bg-white fixed shadow-xl">
     <div
@@ -19,9 +17,9 @@
       <div class="h-full">
         <div class="main-menu relative flex items-center h-full cursor-pointer">
           <avatar
-            :isHaveAvatar="this.user && !!this.user.avatar"
-            :srcImage="this.user && this.user.avatar"
-            :firstChar="this.user && this.user.fullName.charAt(0)"
+            :is-have-avatar="user && !!user.avatar"
+            :src-image="user && user.avatar"
+            :first-char="user && user.fullName.charAt(0)"
           />
           <p
             class="text-dark_bg leading-[1.4rem] text-[1.2rem] h-[1.4rem] ml-4"
@@ -30,13 +28,14 @@
           </p>
           <fa icon="caret-down" class="text-dark_bg text-[1.2rem] ml-2" />
           <div
-            class="sub-menu hidden absolute w-[300px] px-4 py-4
-                 bg-white shadow-xl top-[110%] right-0 rounded-[20px] 
-                   after:content[''] after:w-full after:h-[20px] after:bg-slate-500
-                   after:absolute after:top-[-20px] after:left-0 after:bg-transparent
-                   "
+            class="sub-menu hidden absolute w-[300px] px-4 py-4 bg-white shadow-xl top-[110%] right-0 rounded-[20px] after:content[''] after:w-full after:h-[20px] after:bg-slate-500 after:absolute after:top-[-20px] after:left-0 after:bg-transparent"
           >
-            <SubMenuItem icon="user" content="Profile" component="button" />
+            <SubMenuItem
+              icon="user"
+              content="Profile"
+              component="button"
+              :handle="handleShowProfile"
+            />
             <SubMenuItem
               icon="plus"
               content="Add friend"
@@ -52,7 +51,7 @@
             <SubMenuItem
               icon="moon"
               content="Dark mode"
-              :isDarkMode="true"
+              :is-dark-mode="true"
               component="button"
             />
             <SubMenuItem
@@ -65,46 +64,56 @@
         </div>
       </div>
     </div>
-    <Modal />
+    <ModalProfile
+      :is-show="isShowModalProfile"
+      @closeModal="updateCloseModalProfile"
+    />
   </header>
 </template>
 
 <script>
 import Avatar from './Avatar.vue'
 import SubMenuItem from './SubMenuItem.vue'
-import Modal from './Modal.vue'
-
-import { getUserByEmail } from '~/api/user.api'
+import ModalProfile from './ModalProfile.vue'
 
 export default {
-  components: { Avatar, SubMenuItem, Modal },
+  components: { Avatar, SubMenuItem, ModalProfile },
 
   data() {
     return {
       user: null,
+      isShowModalProfile: false,
     }
   },
-  async fetch() {
-    const email = this.doGetEmailCurrent
-    if (email) this.user = await getUserByEmail(email)
-  },
-  computed: {
-    doGetEmailCurrent() {
-      return this.$store.getters['account/getAccount']
-    },
+  created() {
+    this.setUser()
   },
 
   methods: {
+    setUser() {
+      if (process.server) {
+        console.log('server run')
+      } else {
+        this.user = JSON.parse(localStorage.getItem('user'))
+      }
+    },
     handleLogout() {
-      this.$store.dispatch("account/clearAccount")
+      localStorage.removeItem('user')
+      this.$store.dispatch('account/clearAccount')
       this.$router.push('/login')
-    }
-  }
+    },
+    handleShowProfile() {
+      this.isShowModalProfile = true
+    },
+    updateCloseModalProfile() {
+      this.isShowModalProfile = false
+    },
+  },
 }
 </script>
 
 <style>
-.main-menu:hover .sub-menu{
+.main-menu:hover .sub-menu {
   display: block;
 }
 </style>
