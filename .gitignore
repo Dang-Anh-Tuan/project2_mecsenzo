@@ -89,11 +89,5 @@ sw.*
 # Vim swap files
 *.swp
 
-store/
-pages/login
-pages/
-api/
-components/
-helper/
-layouts/
-middleware/
+
+components/Modal.vue
