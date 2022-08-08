@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { getUserByEmail } from '~/api/user.api'
+import { getUserByEmail, setActiveUser } from '~/api/user.api'
 
 export default {
   layout: 'auth',
@@ -151,9 +151,10 @@ export default {
         })
         const email = this.$store.getters['account/getAccount']
         const user = await getUserByEmail(email)
+
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
-
+        setActiveUser(true)
         this.$router.push('/')
       } catch (e) {
         this.$refs.errorMsg.classList.remove('hidden')

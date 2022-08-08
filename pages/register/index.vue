@@ -117,13 +117,13 @@ export default {
             isLogin: this.isLogin,
           })
           .then(async () => {
-            // eslint-disable-next-line no-console
             await createUser({
               fullName: this.fullName,
               email: this.email,
               avatar: null,
               address: null,
               age: null,
+              isActive: true,
             })
             this.$router.push('/')
           })

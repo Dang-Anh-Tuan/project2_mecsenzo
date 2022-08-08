@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { addDoc, collection, onSnapshot } from 'firebase/firestore'
+import { addDoc, collection, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase/config'
 import addTimeStamp from '~/helper/addTimeStamp'
 import { useFirestoreQueryCondition } from '~/api/core'
@@ -33,4 +33,12 @@ export const getUserByEmail = async function (email) {
   const user = data[0]
 
   return user
+}
+
+export const setActiveUser = function (valueActive) {
+  const currentUser = JSON.parse(localStorage.getItem('user'))
+
+  const docRef = doc(db, 'users', currentUser.id)
+
+  setDoc(docRef, { ...currentUser, isActive: valueActive })
 }

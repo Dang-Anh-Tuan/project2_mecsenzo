@@ -75,6 +75,7 @@
 import Avatar from './Avatar.vue'
 import SubMenuItem from './SubMenuItem.vue'
 import ModalProfile from './ModalProfile.vue'
+import { setActiveUser } from '~/api/user.api'
 
 export default {
   components: { Avatar, SubMenuItem, ModalProfile },
@@ -91,13 +92,12 @@ export default {
 
   methods: {
     setUser() {
-      if (process.server) {
-        console.log('server run')
-      } else {
+      if (process.client) {
         this.user = JSON.parse(localStorage.getItem('user'))
       }
     },
     handleLogout() {
+      setActiveUser(false)
       localStorage.removeItem('user')
       this.$store.dispatch('account/clearAccount')
       this.$router.push('/login')

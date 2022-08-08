@@ -17,9 +17,7 @@
         {{ firstChar }}
       </p>
     </div>
-    <span class="hidden w-[44px] h-[44px] text-[0.8rem]"> </span>
-    <span class="hidden w-[26px] h-[26px] text-[1.2rem]"></span>
-    <span class="hidden w-[100px] h-[100px] text-[2rem]"></span>
+ 
   </div>
 </template>
 
