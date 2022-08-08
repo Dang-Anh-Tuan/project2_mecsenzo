@@ -33,41 +33,43 @@
             <SubMenuItem
               icon="user"
               content="Profile"
-              component="button"
-              :handle="handleShowProfile"
+              type="button"
+              :handle-click-sub-menu-item="handleShowProfile"
             />
             <SubMenuItem
               icon="plus"
               content="Add friend"
               to="/add-friend"
-              component="nuxt-link"
+              type="nuxt-link"
             />
             <SubMenuItem
               icon="chart-line"
               content="Statistic"
               to="/statistic"
-              component="nuxt-link"
+              type="nuxt-link"
             />
             <SubMenuItem
               icon="moon"
               content="Dark mode"
               :is-dark-mode="true"
-              component="button"
+              type="button"
             />
             <SubMenuItem
               icon="arrow-right-from-bracket"
               content="Logout"
-              component="button"
-              :handle="handleLogout"
+              type="button"
+              :handle-click-sub-menu-item="handleLogout"
             />
           </div>
         </div>
       </div>
     </div>
-    <ModalProfile
-      :is-show="isShowModalProfile"
-      @closeModal="updateCloseModalProfile"
-    />
+    <div
+      v-if="isShowModalProfile"
+      class="absolute w-[100vw] h-[100vh] top-0 left-0 z-[100]"
+    >
+      <ModalProfile @closeModal="updateCloseModalProfile" />
+    </div>
   </header>
 </template>
 
@@ -93,6 +95,12 @@ export default {
   methods: {
     setUser() {
       if (process.client) {
+        const userInStore = this.$store.getters['user/getUser']
+
+        if (userInStore) {
+          this.user = userInStore
+        }
+        
         this.user = JSON.parse(localStorage.getItem('user'))
       }
     },

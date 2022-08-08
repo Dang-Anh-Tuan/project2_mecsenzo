@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { createUser } from '@/api/user.api'
+import { createUser, getUserByEmail, setActiveUser } from '@/api/user.api'
 
 export default {
   layout: 'auth',
@@ -125,6 +125,15 @@ export default {
               age: null,
               isActive: true,
             })
+          })
+          .then(() => {
+            getUserByEmail(this.email).then((user) => {
+              localStorage.setItem('user', JSON.stringify(user))
+              this.$store.dispatch('user/setUser', user)
+              setActiveUser(true)
+            })
+          })
+          .then(() => {
             this.$router.push('/')
           })
           .catch((e) => {

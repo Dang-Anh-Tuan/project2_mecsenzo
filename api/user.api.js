@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { addDoc, collection, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase/config'
-import addTimeStamp from '~/helper/addTimeStamp'
 import { useFirestoreQueryCondition } from '~/api/core'
+import { addTimeStamp } from '~/helper/FirebaseHelper'
 
 const collectionRef = collection(db, 'users')
 
