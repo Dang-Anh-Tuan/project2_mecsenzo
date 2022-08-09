@@ -35,10 +35,29 @@ export const getUserByEmail = async function (email) {
   return user
 }
 
-export const setActiveUser = function (valueActive) {
-  const currentUser = JSON.parse(localStorage.getItem('user'))
+export const setActiveUser = async function (valueActive) {
+  const currentEmail = localStorage.getItem('email')
+  const currentUser = await getUserByEmail(currentEmail)
 
   const docRef = doc(db, 'users', currentUser.id)
 
   setDoc(docRef, { ...currentUser, isActive: valueActive })
+}
+
+export const setAvatarUser = async function (avatarUrl) {
+  const currentEmail = localStorage.getItem('email')
+  const currentUser = await getUserByEmail(currentEmail)
+
+  const docRef = doc(db, 'users', currentUser.id)
+
+  const newUser = { ...currentUser, avatar: avatarUrl }
+  localStorage.setItem('user', JSON.stringify(newUser))
+  console.log(newUser)
+  setDoc(docRef, newUser)
+}
+
+export const updateUser = function (user) {
+  const docRef = doc(db, 'users', user.id)
+
+  setDoc(docRef, user)
 }

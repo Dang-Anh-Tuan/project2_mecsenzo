@@ -1,5 +1,6 @@
 import { getFirestore } from '@firebase/firestore'
 import { initializeApp } from 'firebase/app'
+import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAG4LxJnpv5afNK5ndQBUTmHvNI1gLdwkU',
@@ -15,7 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 
 const db = getFirestore(app)
-
+const storage = getStorage(app)
 // connectFirestoreEmulator(db, 'localhost', 8080)
 
-export { db }
+export { storage, db }

@@ -17,8 +17,8 @@
       <div class="h-full">
         <div class="main-menu relative flex items-center h-full cursor-pointer">
           <avatar
-            :is-have-avatar="user && !!user.avatar"
-            :src-image="user && user.avatar"
+            :is-have-avatar="!!avatar"
+            :src-image="avatar"
             :first-char="user && user.fullName.charAt(0)"
           />
           <p
@@ -68,7 +68,10 @@
       v-if="isShowModalProfile"
       class="absolute w-[100vw] h-[100vh] top-0 left-0 z-[100]"
     >
-      <ModalProfile @closeModal="updateCloseModalProfile" />
+      <ModalProfile
+        @closeModal="closeModalProfile"
+        @update:user="handleUpdateUser"
+      />
     </div>
   </header>
 </template>
@@ -77,7 +80,7 @@
 import Avatar from './Avatar.vue'
 import SubMenuItem from './SubMenuItem.vue'
 import ModalProfile from './ModalProfile.vue'
-import { setActiveUser } from '~/api/user.api'
+import { getUserByEmail, setActiveUser } from '~/api/user.api'
 
 export default {
   components: { Avatar, SubMenuItem, ModalProfile },
@@ -86,23 +89,27 @@ export default {
     return {
       user: null,
       isShowModalProfile: false,
+      avatar: null,
     }
   },
-  created() {
-    this.setUser()
+
+  computed: {
+    getCurrentEmail() {
+      if (process.server) {
+        return this.$store.getters['account/getAccount']
+      } else {
+        return localStorage.getItem('email')
+      }
+    },
+  },
+  async created() {
+    await this.setUser()
+    this.avatar = this.user && this.user.avatar
   },
 
   methods: {
-    setUser() {
-      if (process.client) {
-        const userInStore = this.$store.getters['user/getUser']
-
-        if (userInStore) {
-          this.user = userInStore
-        }
-        
-        this.user = JSON.parse(localStorage.getItem('user'))
-      }
+    async setUser() {
+      this.user = await getUserByEmail(this.getCurrentEmail)
     },
     handleLogout() {
       setActiveUser(false)
@@ -113,8 +120,15 @@ export default {
     handleShowProfile() {
       this.isShowModalProfile = true
     },
-    updateCloseModalProfile() {
+    closeModalProfile() {
       this.isShowModalProfile = false
+    },
+    async handleUpdateUser(payload) {
+      await this.setUser()
+      if (payload) {
+        this.avatar = payload.urlAvatarTemp
+        this.user.fullName = payload.newUser.fullName
+      }
     },
   },
 }
