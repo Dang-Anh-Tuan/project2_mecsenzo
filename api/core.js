@@ -28,34 +28,19 @@ const useFirestoreQueryCondition = async function (
     value "asc" | "desc"
   } */
   // limit : number
+  const arr = [
+    collectionRef,
+    where(condition.field, condition.operator, condition.value),
+  ]
 
-  let q
-
-  if (!orderby && !limit) {
-    q = query(
-      collectionRef,
-      where(condition.field, condition.operator, condition.value)
-    )
-  } else if (orderby && !limit) {
-    q = query(
-      collectionRef,
-      where(condition.field, condition.operator, condition.value),
-      orderBy(orderby.field, orderby.value)
-    )
-  } else if (!orderby && limit) {
-    q = query(
-      collectionRef,
-      where(condition.field, condition.operator, condition.value),
-      limit(limitValue)
-    )
-  } else {
-    q = query(
-      collectionRef,
-      where(condition.field, condition.operator, condition.value),
-      orderBy(orderby.field, orderby.value),
-      limit(limitValue)
-    )
+  if (orderby) {
+    arr.push(orderBy(orderby.field, orderby.value))
   }
+  if (limit) {
+    arr.push(limit(limitValue))
+  }
+
+  const q = query(...arr)
 
   const querySnapshot = await getDocs(q)
 
